@@ -1,0 +1,62 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.3.1/lib/p5.js"></script>
+    <title>Document</title>
+
+
+</head>
+<body>
+    <script>
+        var r = 100;
+
+        function hexagon(x,y){
+            this.x = x
+            this.y = y
+            this.points = []
+
+            this.render = function(){
+                beginShape()
+                for(var i= 0; i < 360; i+= 60){
+                    var ly = sin(i)*r
+                    var lx = cos(i)*r
+                    this.points.push(createVector(lx+this.x,ly+this.y))
+                    vertex(lx+this.x, ly+this.y)
+
+                }
+                endShape(CLOSE)
+            }
+
+
+        }
+        var hss = [];
+        function setup(){
+            angleMode(DEGREES)
+            createCanvas(1000, 600)
+            hss.push( new hexagon(width/2,height/2))
+            background(0)
+            stroke(255)
+            hss[0].render()
+            for(var i = 0; i < 6; i++){
+                var p = hss[0].points[i]
+                console.log(p)
+                var nh = new hexagon(p.x+100,p.y+100)
+                hss.push(nh)
+            }
+            for(var i = 0; i < hss.length; i++){
+                hss[i].render()
+            }
+
+
+        }
+        function draw(){
+
+
+
+        }
+
+    </script>
+</body>
+</html>

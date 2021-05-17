@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .rate_container .fa{
+            font-size: 30px;
+        }
+        .diff_selection div{
+            flex: 1;
+            flex-basis: auto;
+            text-align: center;
+            padding-left: -20px;
+            padding-right: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border: 1px solid black;
+            background: rgb(3, 190, 144);
+            cursor: pointer;
+            
+        }
+        .fa{
+            cursor: pointer;
+        }
+        .diff_selection div:hover,.diff_selection div:active{
+            background-color: rgb(21, 116, 92);;
+        }
+        .diff_selection{
+            justify-items: left;
+        }
+        .logo_img{
+            cursor: pointer;
+        }
+        .header .support, .about{
+            cursor: pointer;
+        }
+        .gratulation_container{
+            background-color: rgb(84,196,170);
+            color: white;
+            width: 500px;
+            height: 180px;
+            margin: auto;
+            font-weight: 600px;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            margin-bottom: 100px;
+            border-radius: 2px;
+            box-shadow: 0px 0px 10px #40f8a3;
+        }
+        .gratulation_container h1{
+            font-size: 40px;
+            color: white;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+        #defaultCanvas0{
+            position: relative;
+            left: 50%;
+            transform: translate(-50%,0);
+            border-radius: 10px;
+        }
+        body{
+            background-image: url("{{ url_for('static', filename='background_low_poly.png') }}");
+            background-size:cover;
+            background-position: center;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            margin: auto;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+        .header{
+            width: 100%;
+            height: 100px;
+            font-size: 2.1em;
+            padding: 0;
+            border: 0;
+            margin: auto;
+            background-color: rgb(0, 49, 71);
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            color: white;
+            position: fixed;
+            z-index: 99999;
+            top: 0;
+            transition: background-color 0.5s;
+            box-shadow: 0px 10px 30px black;
+            
+
+        }
+        .header div{
+            flex: 2;
+            text-align: center;
+        }
+        .header div p{
+            margin-top: 30px;
+        }
+        .header .logo{
+            flex: 10;
+            text-align: left;
+            margin-left: 30px;
+        }
+        .content{
+
+            height: 40em;
+            width: 100%;
+            margin: auto;
+            background-color: rgb(26, 40, 59);
+            color: white;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            font-size: 20px;
+
+        }
+        .main-content{
+            margin: auto;
+            display: flex;
+            flex-direction: row;
+            width: 50%;
+        }
+        .content div{
+            flex: 1;
+        }
+        #background_motion{
+        }
+        .lets-play{
+            width: 22em;
+            background-color: rgb(126, 197, 20);
+            height: 7.8em;
+            position: relative;
+            z-index: 20;
+            top: 20em;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            text-align: center;
+            cursor: pointer;
+            vertical-align: middle;
+            box-shadow: 0px 0px 20px #068d4f;
+        }
+        .lets-play #play_button{
+            background-color: rgb(126, 197, 20);
+            text-shadow: 0px 0px 30px black;
+            user-select: none;
+            color: white;
+            padding-top: 35px;
+            padding-bottom: 35px;
+            font-size: 50px;
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            font-weight: 500;
+            position: relative;
+            z-index: 20;
+            
+        }
+        .difficulties{
+            position: relative;
+            margin-top: -30px;
+            height: 3em;
+            width:  22em;
+            background-color: rgb(84, 102, 86);
+            cursor: auto;
+            display: flex;
+            flex-direction: row;
+            font-family: 'Courier New';
+            z-index: 1;
+            top: -80px;
+        }
+        .difficulties div{
+            font-size: 20px;
+            color: white;
+            flex: 1;
+            border: 1px solid whitesmoke;
+            transition: background-color 0.1s;
+        }
+        .difficulties div:active{
+            background-color: rgb(167, 231, 181);
+        }
+        .difficulties div p{
+            user-select: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .game-screen{
+            padding-top: 140px;
+            height: 100%;
+            margin: auto;
+        }
+        .game_pad{
+            background-color: greenyellow;
+            width: 130px;
+            height: 130px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .game_pad .row{
+            flex-grow: 1;
+            display: flex;
+            flex-direction: row;
+        }
+        .row div{
+            margin-top: 10px;
+            margin: auto;
+            flex: 1;
+        }
+        .arrow-up {
+            width: 0; 
+            height: 0; 
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            
+            border-bottom: 30px solid black;
+            }
+
+            .arrow-down {
+            width: 0; 
+            height: 0; 
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            
+            border-top: 30px solid black;
+            }
+
+            .arrow-right {
+            width: 0; 
+            height: 0; 
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            
+            border-left: 30px solid black;
+            }
+
+            .arrow-left {
+            width: 0; 
+            height: 0; 
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent; 
+            
+            border-right:30px solid black; 
+            }
+            .amount{
+                font-size: 23px;
+                font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            }
+            .timer{
+                width: 130px;
+                height: 20px;
+                color: rgb(230, 226, 220);
+                font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+                margin: auto;
+                text-align: center;
+                font-size: 40px;
+                padding-bottom: 40px;
+            }
+            .arrow-down,.arrow-left,.arrow-right,.arrow-up{
+                transition: border-color 0.1s;
+            }
+            .leaderboard{
+               padding-top: 50px;
+                display: flex;
+                flex-direction: column;
+
+            }
+            .player_row{
+                display: flex;
+                flex-direction: row;
+                flex: 1;
+                
+
+            }
+            .player_row div{
+                flex: 1;
+                background-color: rgb(134, 133, 67);
+                margin-bottom: 2px;
+                width: 100%;
+                height: 50px;
+            }
+            .main-content div{
+                padding-left: 10px;
+            }
+            .stat_columns{
+                display: flex;
+                flex-direction: row;
+            }
+            .stat_columns div{
+                flex: 1;
+            }
+            #gname_class{
+                text-align: center;
+                font-size: 20px;
+                border-style: none;
+                border-radius: 30px;
+            }
+            .statistics{
+                color:whitesmoke;
+                width: 100%;
+                height: 500px;
+                background-color: rgb(31, 82, 105);
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            }
+            .stat_container{
+                display: flex;
+                flex-direction: row;
+                width: 80%;
+                margin: auto;
+
+            }
+            .stat_container div{
+                flex: 1;
+                text-align: center;
+            }
+            .support_container{
+                background-image: url("{{ url_for('static', filename='lowpoly.png') }}");
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
+            .feedback_class input{
+                font-size: 25px;
+            }
+            .feedback_class *{
+                border: none;
+                border-radius: 3px;
+
+            }
+            .checked{
+                color: orange;
+            }
+
+
+    </style>
+    <script>
+    
+        window.onbeforeunload = function () {
+        //send delete active user
+        var token = $(".send_feedback").attr("data-f")
+        $.post("/delete",{"token":token})
+    };
+    
+    
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/p5@1.3.1/lib/p5.js"></script>
+    <script> 
+
+        function add_to(){
+            var winner_data={
+                "guest_id": guest_name_f,
+                "time": Math.round(timer),
+                "diff": selected_diff,
+                "token":$(".send_feedback").attr("data-f")
+            }
+            console.log(winner_data)
+            var res = $.post("/add-winner",winner_data)
+            res.done(function(res_data){
+                $("html,body").stop().animate(
+                        {scrollTop: 0},300
+                    )
+                $(".gratulation_container").fadeIn(300)
+                $(".timer").hide()
+                $(".game_pad").hide()
+                $(".current_time").html($(".timer").html())
+
+         
+
+            })
+
+            
+        }
+        function set_zoom(){
+            console.log("ASD")
+            if(window.innerWidth < 1400){
+                $("html").css("zoom","0.7")
+            }
+            else{
+                $("html").css("zoom","1")
+            }
+        }
+        set_zoom()
+        addEventListener("resize",set_zoom)
+    </script>
+   <script async src="{{ url_for('static', filename='background-motion.js') }}">
+       
+   </script>
+   <script>
+                
+            function changeColor(){
+                var header = document.getElementsByClassName("header")[0]
+
+                if(window.scrollY  >= 300){
+                    header.style.backgroundColor = "cyan";
+                    header.style.color = "black"
+                    document.getElementsByClassName("about")[0].innerHTML ="<p>ASDASDAS</p>"
+                }
+                else{
+                    header.style.backgroundColor = "rgb(0, 49, 71)";
+                    header.style.color = "white"
+                    document.getElementsByClassName("about")[0].innerHTML ="<p>About</p>"
+                }
+            }
+            //addEventListener("scroll",changeColor)
+       </script>
+
+    <title>AngryMaze</title>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='logo.png') }}" width="100px" style="border-radius: 50%;" class="logo_img">
+        </div>
+        <div class="support">
+            <p>Support</p>
+        </div>
+        <div class="about">
+            <p>About</p>
+        </div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+    </div>
+    <div id="game-screen" class="game-screen">
+
+        <div class="game_pad">
+            <div class="row">
+                <div></div>
+                <div>
+                    <div class="arrow-up"></div>
+                </div>
+                <div></div>
+            </div>
+            <div class="row">
+                <div><div class="arrow-left"></div></div>
+                <div class="amount">
+                    
+                </div>
+                <div><div class="arrow-right"></div></div>
+            </div>
+            <div class="row">
+                <div></div>
+                <div><div class="arrow-down"></div></div>
+                <div></div>
+            </div>
+            
+        </div>
+        <div class="timer">
+            0:00
+        </div>
+        <div class="gratulation_container" >
+            <h1>You are awesome!</h1>
+            <div>
+                <p style="font-size: 25px; margin-top: 0;">Your time was:</p>
+            </div>
+            <div class="current_time">
+                
+            </div>
+            <div class="play_again" style="width: 35%; background-color: coral; border-radius: 20px; margin: auto; font-size: 25px; cursor: pointer;">
+                Play again!
+            </div>
+        </div>
+    </div>
+    <div id="background_motion">
+        <div class="lets-play">
+            <p id="play_button">
+                Let's Play
+            </p>
+            <div class="difficulties">
+                <div class="easy">
+                    <p>
+                        Easy
+                    </p>
+                </div>
+                <div class="medium">
+                    <p>
+                        Medium
+                    </p>
+                </div>
+                <div class="hard">
+                    <p>
+                        Hard
+                    </p>
+                </div>
+    
+            </div>
+        </div>
+
+    </div>
+
+    <div class="content">
+        <br>
+        <hr width="50%"/>
+        <div class="main-content">
+            <div class="about-content">
+                <h1>About the game</h1>
+            </div>
+            <div class="leaderbord">
+                <h1>Leaderboard</h1>
+                <div class="diff_selection" style="display: flex; flex-direction: row; width: 50%; text-align: left;">
+                    <div class="easys">Easy</div>
+                    <div class="mediums">Medium</div>
+                    <div class="hards">Hard</div>
+                </div>
+                <div class="stat_columns">
+                    <div class="guest_ids">
+                        <h4>Player</h4>
+                    </div>
+                    <div class="time_">
+                        <h4>Time</h4>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <div class="statistics" style="box-shadow: 0px -20px 100px black;">
+        <h1 class="stat_title" style="font-size: 89px; text-align: center; margin-top: 0; text-shadow: 0px 0px 50px black;">Statistics</h1>
+
+        <div class="stat_container">
+            <div class="avg_container">
+                   <h1>Avarage game time</h1>
+                   <p id="average_game_time_easy" style="font-size: 25px;">
+                    Easy: 
+                        {% if easy_avgs%100 < 10%}
+                            {{easy_avgs//100}}.0{{easy_avgs%100}}s
+                        {%else%}
+                            {{easy_avgs//100}}.{{easy_avgs%100}}s
+                        {%endif%}
+
+                   </p>
+                   <p id="average_game_time_easy" style="font-size: 25px;">
+                    Medium: 
+                    {% if medium_avgs%100 < 10%}
+                        {{medium_avgs//100}}.0{{medium_avgs%100}}s
+                    {%else%}
+                        {{medium_avgs//100}}.{{medium_avgs%100}}s
+                    {%endif%}
+
+               </p>
+               <p id="average_game_time_easy" style="font-size: 25px;">
+                Hard:  
+                {% if hard_avgs%100 < 10%}
+                    {{hard_avgs//100}}.0{{hard_avgs%100}}s
+                {%else%}
+                    {{hard_avgs//100}}.{{hard_avgs%100}}s
+                {%endif%}
+
+           </p>
+            </div>
+
+            <div class="rate_container">
+                <h1 style="font-size: 60px;">Overall Rate</h1>
+                <p>
+                    {%for _ in range(stars_count)%}
+                    <div class="fa fa-star checked"></div>
+                    {%endfor%}
+
+                    {%for _ in range(5-stars_count)%}
+                    <div class="fa fa-star"></div>
+                    {%endfor%}
+                    <h2>
+                        {{overall_rate|round(1)}}
+                    </h2>
+                </p>
+            </div>
+            <div class="games_played_container">
+                <h1>Games played</h1>
+                <p id="game_played_counter" style="font-size: 25px;">
+                    Easy: {{all_games[0]}}
+                </p>
+                <p id="game_played_counter" style="font-size: 25px;">
+                    Medium: {{all_games[1]}}
+                </p>
+                <p id="game_played_counter" style="font-size: 25px;">
+                    Hard:{{all_games[2]}}
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="support_container" style="width: 100%; min-height: 300px; box-shadow: 0px -20px 150px rgb(33, 44, 43,0.5);
+    
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: whitesmoke;
+    ">
+        <div class="feedback_container" style="text-align: center; padding-bottom: 100px;">
+            <h1 style="margin-top: 0; padding-top: 50px; font-size: 70px; text-shadow: 0px 0px 50px black;">Give us your feedback about the game</h1>
+            <div class="feedback" style="width: 600px; margin: auto; background-color: rgb(53, 85, 71); min-height: 400px; padding-bottom: 50px;">
+                <div style="display: flex; flex-direction: column; width: 80%; margin: auto; text-align: left; font-size: 25px;" class="feedback_class">
+                    <span id="rate_success" style="text-align: center; font-size: 32px;">Thanks your feedback!</span>
+                    <span style="text-align: center; font-size: 32px;">Rate us</span>
+                    
+                    <div class="stars" style="text-align: center;">
+                        <div class="fa fa-star" id="st0"></div>
+                        <div class="fa fa-star" id="st1"></div>
+                        <div class="fa fa-star"id="st2"></div>
+                        <div class="fa fa-star"id="st3"></div>
+                        <div class="fa fa-star"id="st4"></div>
+                    </div>
+                    <br>
+                    Name
+                    <input type="text" name="fname" id="fname" style="padding: 10px;"/>
+                    <br>
+                    Subject
+                    <input type="text" name="subject" id="subject" style="padding: 10px;"/>
+                    <br>
+                    In details
+                    <textarea name="feedback_detail" id="f_detail" cols="30" rows="10" style="resize: none; font-size: 20px; padding: 10px;"></textarea>
+                    <span class="send_feedback" data-f="{{token}}">Send</span>
+                    <script>
+                        $("#rate_success").hide()
+                        $(".send_feedback").click(function(){
+                                //send post request to the server
+                                //getting the data from the inputs
+                                var fname = document.getElementById("fname").value;
+                                var subject = document.getElementById("subject").value;
+                                var detail = document.getElementById("f_detail").value;
+                                var token = $(this).attr("data-f")
+                                //getting the rate_score
+                                var rates = 0;
+                                $(".fa").each(function(){
+                                    rates += $(this).attr("class").includes("checked") ? 1 : 0
+                                })
+                                //assemble form_data
+                                var form_data = {
+
+                                    "fname":fname,
+                                    "subject":subject,
+                                    "feedback_detail": detail,
+                                    "rates":rates,
+                                    "token": token
+                                }
+
+                                var res = $.post("/give_feedback",form_data)
+                                res.done(function(data){
+                                    if(data != "200"){
+                                        console.log("DONT DARE YOU TO USE BOT TO SPAM THE DATABASE")
+                                    }
+                                    else{
+                                        $("#rate_success").fadeIn(300)
+                                    }
+                                })
+                        })
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+            var res = $.get("/get_leaderboard",{"diff":"easys"})
+            res.done(function(data){
+                //parse data
+                var jsoned = JSON.parse(data)
+                for(var key in jsoned){
+                    var leaderboard_row = document.createElement("div")
+                    leaderboard_row.className="player_row"
+                    var mm = "0"
+                    var ts = "0"
+                    if (Math.floor(jsoned[key]/6000) > 9){
+                        mm = Math.floor(jsoned[key]/6000).toString()
+                    }
+                    else{
+                        mm += Math.floor(jsoned[key]/6000).toString()
+                    }
+                    if(jsoned[key] % 100 > 9){
+                        ts = jsoned[key] % 100 
+                    }
+                    else{
+                        ts += jsoned[key] % 100
+                    }
+                    var parsed_time = mm+":"+(Math.floor(jsoned[key]/100)%60)+"."+ts+"s"
+                    var game_time_div = document.createElement("div")
+                    game_time_div.className="game_time"
+                    game_time_div.innerHTML = parsed_time
+                    var guest_div = document.createElement("div")
+                    guest_div.className="guest_id"
+                    guest_div.innerHTML = key
+                    leaderboard_row.appendChild(guest_div)
+                    leaderboard_row.appendChild(game_time_div)
+                    $(".leaderbord").append(leaderboard_row)
+                }
+            })
+        $(".diff_selection div").click(function(){
+            var form_data = {"diff":$(this).attr("class")}
+            var res = $.get("/get_leaderboard",form_data)
+            res.done(function(data){
+                //parse data
+                $(".leaderbord .player_row").each(function(){
+                    $(this).remove();
+                })
+                var jsoned = JSON.parse(data)
+                for(var key in jsoned){
+                    var leaderboard_row = document.createElement("div")
+                    leaderboard_row.className="player_row"
+                    var mm = "0"
+                    var ts = "0"
+                    if (Math.floor(jsoned[key]/6000) > 9){
+                        mm = Math.floor(jsoned[key]/6000).toString()
+                    }
+                    else{
+                        mm += Math.floor(jsoned[key]/6000).toString()
+                    }
+                    if(jsoned[key] % 100 > 9){
+                        ts = jsoned[key] % 100 
+                    }
+                    else{
+                        ts += jsoned[key] % 100
+                    }
+                    var parsed_time = mm+":"+(Math.floor(jsoned[key]/100)%60)+"."+ts+"s"
+                    var game_time_div = document.createElement("div")
+                    game_time_div.className="game_time"
+                    game_time_div.innerHTML = parsed_time
+                    var guest_div = document.createElement("div")
+                    guest_div.className="guest_id"
+                    guest_div.innerHTML = key
+                    leaderboard_row.appendChild(guest_div)
+                    leaderboard_row.appendChild(game_time_div)
+                    $(".leaderbord").append(leaderboard_row)
+                }
+
+            })
+        })
+
+        var stars = $("#st0,#st1,#st2,#st3,#st4")
+        var stars_clicked = false;
+        var score = 0;
+        $("#st0,#st1,#st2,#st3,#st4").mouseover(function(){
+            var cid = $(this).attr("id").split("st")[1]
+            if(!stars_clicked){
+                for(var i = 0; i < parseInt(cid)+1; i++){
+                    $(stars[i]).addClass("checked")
+                }
+                $(this).click(function(){
+                    for(var i = 0; i < parseInt(cid)+1; i++){
+                        $(stars[i]).addClass("checked")
+                    }
+                    score = parseInt(cid)+1
+                    stars_clicked=true
+                })
+
+            }
+
+        })
+   
+        $(".fa").mouseleave(function(){
+            if(!stars_clicked){
+                for(var i = 0; i<5; i++){
+                if($(stars[i]).hasClass("checked")){
+                    $(stars[i]).removeClass("checked")
+                }
+            }
+            }
+
+        })
+        
+
+        var guest_name_f;
+        //$(".difficulties").hide()
+        $(".game-screen").hide()
+        $(".gratulation_container").hide()
+        
+        //$("#background_motion").hide()
+        $(".logo_img").click(function(){
+
+            $("html,body").stop().animate(
+                {scrollTop: 0},300
+            )
+        })
+        $(".about").click(function(){
+            $("html,body").stop().animate(
+                {scrollTop: 680},300
+            )
+
+        })
+        var clicked = false
+        $(".play_again").click(function(){
+
+            window.location.href = window.location.origin;
+        })
+        $("#play_button").click(function(){
+            if(!clicked){
+                $(this).stop().animate({
+                    backgroundColor: "red"
+
+                },400)
+                $(this).stop().animate({
+                    backgroundColor: "red"
+
+                },400)
+                $(".difficulties").stop(true,false).animate({
+                        top: '+=80px'
+                    },
+                    500,
+                    function(){
+                        return
+                    })
+                clicked=true
+                $(this).css("fontSize","30px")
+                $(this).html("Select a difficulty")
+            var input_name = document.createElement("input")
+            input_name.name ="guest_name"
+            input_name.type ="text"
+            input_name.id="gname_class"
+            input_name.value = "Guest#"+(Math.floor(Math.random()*9000)+1000)
+            input_name.placeholder = "Guest#"+(Math.floor(Math.random()*9000)+1000)
+            
+            $(this).append(input_name)
+            $(this).removeClass("active")
+            $("#gname_class").hide()
+            $("#gname_class").fadeIn(200);
+            }
+        })
+        maze_post_data = {
+        "easy":{
+            "w":16,
+            "h":9
+        },
+        "medium":{
+            "w":20,
+            "h":9
+        },
+        "hard":{
+            "w":26,
+            "h":9
+        }
+    }
+    var rd_;
+    var selected_diff;
+        $(".difficulties div").click(function(){
+            selected_diff = $(this).attr("class")
+            var c = maze_post_data[$(this).attr("class")]
+            var r = $.get("/maze-data",c)
+
+            //check if its xss reflective
+            guest_name_f = document.getElementById("gname_class").value
+            var lt = /</g, 
+                gt = />/g, 
+                ap = /'/g, 
+                ic = /"/g;
+                guest_name_f = guest_name_f.toString().replace(lt, "&lt;").replace(gt, "&gt;").replace(ap, "&#39;").replace(ic, "&#34;");
+
+            r.done(function(rd){
+                $(".game-screen").show()
+                var sf = document.createElement("script")
+                rd_ = rd
+                sf.id = "game_script"
+                sf.type = "text/javascript"
+                sf.src = "{{ url_for('static', filename='sketch.js') }}"
+                document.head.appendChild(sf)
+                $("#background_motion").hide()
+               
+            })
+
+
+        })
+        window.addEventListener("keydown", function(e) {
+    if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+        e.preventDefault();
+    }
+    }, false);
+
+    </script>
+
+</body>
+</html>
