@@ -95,6 +95,7 @@
 
         }
         .header div{
+            text-shadow: 0px 0px 20px black;
             flex: 2;
             text-align: center;
         }
@@ -102,13 +103,17 @@
             margin-top: 30px;
         }
         .header .logo{
-            flex: 10;
+            flex: 4;
             text-align: left;
             margin-left: 30px;
         }
+        .header .title{
+            flex-grow: 16;
+            margin-left: -30px;
+        }
         .content{
 
-            height: 40em;
+            height: fit-content;
             width: 100%;
             margin: auto;
             background-color: rgb(26, 40, 59);
@@ -118,6 +123,7 @@
 
         }
         .main-content{
+            height: fit-content;
             margin: auto;
             display: flex;
             flex-direction: row;
@@ -126,7 +132,10 @@
         .content div{
             flex: 1;
         }
-        #background_motion{
+        .game_time,.guest_id{
+            padding-top: 20px;
+            height: 20px;
+            padding-bottom: -10px;
         }
         .lets-play{
             width: 22em;
@@ -272,15 +281,19 @@
                 display: flex;
                 flex-direction: row;
                 flex: 1;
+                border-radius: 2px;
                 
 
             }
             .player_row div{
                 flex: 1;
-                background-color: rgb(134, 133, 67);
+                background-color: rgba(87, 153, 128, 0.534);
                 margin-bottom: 2px;
+                
                 width: 100%;
-                height: 50px;
+                height: auto;
+                padding-top: 10px;
+                padding-bottom: 10px;
             }
             .main-content div{
                 padding-left: 10px;
@@ -301,7 +314,7 @@
             .statistics{
                 color:whitesmoke;
                 width: 100%;
-                height: 500px;
+                height: fit-content;
                 background-color: rgb(31, 82, 105);
                 font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
             }
@@ -348,12 +361,13 @@
     <script async src="https://cdn.jsdelivr.net/npm/p5@1.3.1/lib/p5.js"></script>
     <script> 
 
-        function add_to(){
+        function add_to(w,r){
             var winner_data={
                 "guest_id": guest_name_f,
                 "time": Math.round(timer),
                 "diff": selected_diff,
-                "token":$(".send_feedback").attr("data-f")
+                "token":$(".send_feedback").attr("data-f"),
+                "accuracy": r/(w+r)
             }
             console.log(winner_data)
             var res = $.post("/add-winner",winner_data)
@@ -364,7 +378,7 @@
                 $(".gratulation_container").fadeIn(300)
                 $(".timer").hide()
                 $(".game_pad").hide()
-                $(".current_time").html($(".timer").html())
+                $(".current_time").html($(".timer").html()+"s")
 
          
 
@@ -372,14 +386,16 @@
 
             
         }
+        var zoom = 1
         function set_zoom(){
             console.log("ASD")
             if(window.innerWidth < 1400){
-                $("html").css("zoom","0.7")
+                zoom = 0.7
             }
             else{
-                $("html").css("zoom","1")
+                zoom = 1  
             }
+            $("html").css("zoom",zoom)
         }
         set_zoom()
         addEventListener("resize",set_zoom)
@@ -387,24 +403,6 @@
    <script async src="{{ url_for('static', filename='background-motion.js') }}">
        
    </script>
-   <script>
-                
-            function changeColor(){
-                var header = document.getElementsByClassName("header")[0]
-
-                if(window.scrollY  >= 300){
-                    header.style.backgroundColor = "cyan";
-                    header.style.color = "black"
-                    document.getElementsByClassName("about")[0].innerHTML ="<p>ASDASDAS</p>"
-                }
-                else{
-                    header.style.backgroundColor = "rgb(0, 49, 71)";
-                    header.style.color = "white"
-                    document.getElementsByClassName("about")[0].innerHTML ="<p>About</p>"
-                }
-            }
-            //addEventListener("scroll",changeColor)
-       </script>
 
     <title>AngryMaze</title>
 </head>
@@ -412,6 +410,9 @@
     <div class="header">
         <div class="logo">
             <img src="{{ url_for('static', filename='logo.png') }}" width="100px" style="border-radius: 50%;" class="logo_img">
+        </div>
+        <div class="title" style="text-align: center; justify-content: center;">
+            <h1 style="margin-top: 10px; text-shadow: 0px 0px 20px black;">The MultiT Maze</h1>
         </div>
         <div class="support">
             <p>Support</p>
@@ -456,9 +457,9 @@
         <div class="gratulation_container" >
             <h1>You are awesome!</h1>
             <div>
-                <p style="font-size: 25px; margin-top: 0;">Your time was:</p>
+                <p style="font-size: 25px; margin-top: 0; margin-bottom: 0;">Your time was:</p>
             </div>
-            <div class="current_time">
+            <div class="current_time" style="font-size: 22px;">
                 
             </div>
             <div class="play_again" style="width: 35%; background-color: coral; border-radius: 20px; margin: auto; font-size: 25px; cursor: pointer;">
@@ -499,6 +500,32 @@
         <div class="main-content">
             <div class="about-content">
                 <h1>About the game</h1>
+                <p>
+                    This game is literally a maze game. 
+                    You need to get out of the maze. The escape plan is very easy to understand. Go down to the bottom right corner and you will be out.
+                    But you have to use your multitasking skills to get out as quickly as possible with a high accuracy rate.
+                </p>
+                <h1>Gameplay</h1>
+                <p>
+                    Use the arrows to increase your view range. If you miss the correct direction your range will be decreased.<br>
+                    You can move around the maze by using W, A, S, D.<br>
+                    The difficult the game the larger the maze will be.<br>
+                    <br>
+                    You can press 'o' the enable the debug mode. You can see how I managed to implement my own collider framework.
+                    &nbsp;The game won't be on the leaderboard if you enable the debug mode once.
+                </p>
+                <h1>New Features ( soon )</h1>
+                <p>
+                    <ul>
+                        <li>
+                            At hard difficulty the maze will change by every 20 missed direction.
+                        </li>
+                        <li>
+                            At medium difficulty the escape location will be different each time.
+
+                        </li>
+                    </ul>
+                </p>
             </div>
             <div class="leaderbord">
                 <h1>Leaderboard</h1>
@@ -513,6 +540,9 @@
                     </div>
                     <div class="time_">
                         <h4>Time</h4>
+                    </div>
+                    <div class="accuracy_">
+                        <h4>Accuracy</h4>
                     </div>
                 </div>
                 
@@ -555,7 +585,14 @@
             </div>
 
             <div class="rate_container">
-                <h1 style="font-size: 60px;">Overall Rate</h1>
+                <h1 style="margin-top: 0; margin-bottom: 10px;">
+                    Avarage accuracy
+                </h1>
+                <p style=" margin-bottom: 0px; font-size: 20px;">
+                    {{avg_acc|round(2)}}%
+                </p>
+
+                <h1 style="font-size: 60px; margin-top: 10px;">Overall Rate</h1>
                 <p>
                     {%for _ in range(stars_count)%}
                     <div class="fa fa-star checked"></div>
@@ -589,12 +626,21 @@
     
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     color: whitesmoke;
+    
+    
     ">
         <div class="feedback_container" style="text-align: center; padding-bottom: 100px;">
             <h1 style="margin-top: 0; padding-top: 50px; font-size: 70px; text-shadow: 0px 0px 50px black;">Give us your feedback about the game</h1>
             <div class="feedback" style="width: 600px; margin: auto; background-color: rgb(53, 85, 71); min-height: 400px; padding-bottom: 50px;">
                 <div style="display: flex; flex-direction: column; width: 80%; margin: auto; text-align: left; font-size: 25px;" class="feedback_class">
                     <span id="rate_success" style="text-align: center; font-size: 32px;">Thanks your feedback!</span>
+                    <h2 style="text-align: center; text-shadow: 0px 0px 20px black;">Patreon</h2>
+                    <span>If you want to support my work, check out my patreon.</span>
+                    <ul style="margin-top: 0;">
+                        <li><a href="https://www.patreon.com/molesz/" style="color: rgb(232, 233, 187); text-decoration: none;">patreon.com/molesz</a></li>
+                    </ul>
+                    
+                    <br>
                     <span style="text-align: center; font-size: 32px;">Rate us</span>
                     
                     <div class="stars" style="text-align: center;">
@@ -613,7 +659,12 @@
                     <br>
                     In details
                     <textarea name="feedback_detail" id="f_detail" cols="30" rows="10" style="resize: none; font-size: 20px; padding: 10px;"></textarea>
-                    <span class="send_feedback" data-f="{{token}}">Send</span>
+                    <span class="send_feedback" style="text-align: center; padding: 10px; background-color: rgb(7, 184, 116); width: 30%; margin: auto; margin-top: 10px;
+                    cursor: pointer;
+                    
+                    " data-f="{{token}}">Send</span>
+
+
                     <script>
                         $("#rate_success").hide()
                         $(".send_feedback").click(function(){
@@ -625,7 +676,7 @@
                                 var token = $(this).attr("data-f")
                                 //getting the rate_score
                                 var rates = 0;
-                                $(".fa").each(function(){
+                                $(".stars .fa").each(function(){
                                     rates += $(this).attr("class").includes("checked") ? 1 : 0
                                 })
                                 //assemble form_data
@@ -634,14 +685,14 @@
                                     "fname":fname,
                                     "subject":subject,
                                     "feedback_detail": detail,
-                                    "rates":rates,
+                                    "rates":rates != 0 ? rates : 5,
                                     "token": token
                                 }
 
                                 var res = $.post("/give_feedback",form_data)
                                 res.done(function(data){
                                     if(data != "200"){
-                                        console.log("DONT DARE YOU TO USE BOT TO SPAM THE DATABASE")
+                                        console.error("DONT DARE YOU TO SPAM")
                                     }
                                     else{
                                         $("#rate_success").fadeIn(300)
@@ -654,79 +705,55 @@
         </div>
     </div>
     <script>
-            var res = $.get("/get_leaderboard",{"diff":"easys"})
-            res.done(function(data){
-                //parse data
+            
+            function update_leaderboard(diff){
+                var form_data = {"diff":diff}
+                var res = $.get("/get_leaderboard",form_data)
+                res.done(function(data){
                 var jsoned = JSON.parse(data)
                 for(var key in jsoned){
                     var leaderboard_row = document.createElement("div")
                     leaderboard_row.className="player_row"
                     var mm = "0"
                     var ts = "0"
-                    if (Math.floor(jsoned[key]/6000) > 9){
-                        mm = Math.floor(jsoned[key]/6000).toString()
+                    
+                    var time = parseInt(jsoned[key].split("#")[0])
+                    var acc = Math.round(parseFloat(jsoned[key].split("#")[1])*100,10)
+                    if (Math.floor(time/6000) > 9){
+                        mm = Math.floor(time/6000).toString()
                     }
                     else{
-                        mm += Math.floor(jsoned[key]/6000).toString()
+                        mm += Math.floor(time/6000).toString()
                     }
-                    if(jsoned[key] % 100 > 9){
-                        ts = jsoned[key] % 100 
+                    if(time % 100 > 9){
+                        ts = time % 100 
                     }
                     else{
-                        ts += jsoned[key] % 100
+                        ts += time % 100
                     }
-                    var parsed_time = mm+":"+(Math.floor(jsoned[key]/100)%60)+"."+ts+"s"
+                    var parsed_time = mm+":"+(Math.floor(time/100)%60)+"."+ts+"s"
                     var game_time_div = document.createElement("div")
                     game_time_div.className="game_time"
                     game_time_div.innerHTML = parsed_time
                     var guest_div = document.createElement("div")
                     guest_div.className="guest_id"
                     guest_div.innerHTML = key
+                    var accuracy_div = document.createElement("div")
+                    accuracy_div.className="accuracy_p"
+                    accuracy_div.innerHTML = acc+"%"
                     leaderboard_row.appendChild(guest_div)
                     leaderboard_row.appendChild(game_time_div)
+                    leaderboard_row.appendChild(accuracy_div)
                     $(".leaderbord").append(leaderboard_row)
                 }
             })
+            }
+        
         $(".diff_selection div").click(function(){
-            var form_data = {"diff":$(this).attr("class")}
-            var res = $.get("/get_leaderboard",form_data)
-            res.done(function(data){
-                //parse data
-                $(".leaderbord .player_row").each(function(){
-                    $(this).remove();
-                })
-                var jsoned = JSON.parse(data)
-                for(var key in jsoned){
-                    var leaderboard_row = document.createElement("div")
-                    leaderboard_row.className="player_row"
-                    var mm = "0"
-                    var ts = "0"
-                    if (Math.floor(jsoned[key]/6000) > 9){
-                        mm = Math.floor(jsoned[key]/6000).toString()
-                    }
-                    else{
-                        mm += Math.floor(jsoned[key]/6000).toString()
-                    }
-                    if(jsoned[key] % 100 > 9){
-                        ts = jsoned[key] % 100 
-                    }
-                    else{
-                        ts += jsoned[key] % 100
-                    }
-                    var parsed_time = mm+":"+(Math.floor(jsoned[key]/100)%60)+"."+ts+"s"
-                    var game_time_div = document.createElement("div")
-                    game_time_div.className="game_time"
-                    game_time_div.innerHTML = parsed_time
-                    var guest_div = document.createElement("div")
-                    guest_div.className="guest_id"
-                    guest_div.innerHTML = key
-                    leaderboard_row.appendChild(guest_div)
-                    leaderboard_row.appendChild(game_time_div)
-                    $(".leaderbord").append(leaderboard_row)
-                }
-
-            })
+            $(".player_row").remove()
+            update_leaderboard($(this).attr("class"))
         })
+        window.update_leaderboard("easys")
 
         var stars = $("#st0,#st1,#st2,#st3,#st4")
         var stars_clicked = false;
@@ -775,7 +802,13 @@
         })
         $(".about").click(function(){
             $("html,body").stop().animate(
-                {scrollTop: 680},300
+                {scrollTop: 640*zoom},300
+            )
+
+        })
+        $(".support").click(function(){
+            $("html,body").stop().animate(
+                {scrollTop: 1920*zoom,},300
             )
 
         })
@@ -868,5 +901,5 @@
 
     </script>
 
-</body>
+</body> 
 </html>

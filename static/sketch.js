@@ -88,6 +88,8 @@ var g1;
 var rad;
 var colors = {"up":"bottom","down":"top","left":"right","right":"left"}
 var arrow_codes = {"up":UP_ARROW,"down":DOWN_ARROW,"right":RIGHT_ARROW,"left":LEFT_ARROW}
+
+var wrong = 0, right = 0;
 function drawGradient(x, y,g,r_) {
     let radius = r_;
     g.strokeWeight(1)
@@ -200,9 +202,6 @@ function draw(){
                                     break;             
                             }
                         }
-
-
-
                     }
                     line_points.push(cell_points)
                 }
@@ -216,7 +215,7 @@ function draw(){
             fill(255)
             frameRate(1)
             var cc = timeStrs[ii]
-            background(42, 53, 75)
+            background(26, 40, 59)
             text(cc, 0, height/2-100, width, height)
             if (cc == "GO"){
                 started=true
@@ -254,7 +253,7 @@ function draw(){
     }
     $(".amount").html(r_amount-counter)
 
-    g1.background(42, 53, 75)
+    g1.background(26, 40, 59)
     g1.blendMode(REMOVE)
     drawGradient(player.x,player.y,g1,vision)
     g1.blendMode(BLEND)
@@ -286,10 +285,11 @@ function draw(){
 
 
     if (arr){
-        
         currentCellIndexes = player.indexOfCell()
         if (currentCellIndexes[0] == w-1 && currentCellIndexes[1] == h-1){
-            add_to()
+            ///WIIN GAMEEEE
+
+            add_to(wrong,right)
             remove()
         }
         currentCell = arr["cells"][currentCellIndexes[1]][currentCellIndexes[0]]
@@ -348,18 +348,7 @@ function draw(){
             if(nextCell[0][0] >= 0 && nextCell[1][0] >= 0 && nextCell[1][0] < w && nextCell[0][0] < h){
                 var iii = nextCell[0][0]
                 var jjj = nextCell[1][0]
-
-                //nextcell
                 next_cell_points = line_points[iii*w+jjj]
-                /*for(var k = 0; k < 4; k++){
-                    if(next_cell_points[k] != 0){
-                        var ll = next_cell_points[k]
-                        for(var pp = 0; pp < ll.length; pp++){
-                            var cp = ll[pp]
-                            point(cp.x, cp.y)
-                        }
-                    }
-                }*/
             }
         }
         var current_cell_points = line_points[ciii*w+cjjj]
@@ -475,7 +464,9 @@ function keyPressed(){
         return
     }
     if(keyCode == arrow_codes[dir]){
+        right++;
         if (vision <= 600){
+            
             vision += 80;
         }
         $(".amount").html(r_amount-counter)
@@ -485,12 +476,13 @@ function keyPressed(){
 
 
     else{
+        wrong++;
         if(vision >= 100){
             vision -=40;
         }
     }
 }
-function keyTyped(){
+/*function keyTyped(){
     if(keyCode == 84 && player.canMoveDirs[0]){
         //move up
         player.y -= 1
@@ -508,4 +500,4 @@ function keyTyped(){
         //move-down
         player.y += 1
     }
-}
+}*/

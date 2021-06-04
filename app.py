@@ -2,9 +2,9 @@ from math import floor
 import re
 from flask import Flask, redirect, url_for, request,jsonify,render_template,send_from_directory,make_response
 from flask_sqlalchemy import SQLAlchemy
-from datetime import date,datetime
+from datetime import date,datetime, timedelta
 import game 
-
+import math
 
 app = Flask(__name__,static_folder="static",template_folder="templates")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
@@ -67,6 +67,7 @@ class Guest(db.Model):
     
     ip_address = db.Column(db.String(16),nullable=False)
     difficulty = db.Column(db.String(60),nullable=False)
+    accuracy = db.Column(db.Float,nullable=False)
     def __repr__(self):
         return "<Guest {}>".format(self.guest_id)
 """db.create_all()
@@ -89,15 +90,31 @@ def get_overall_rate():
     rates = Feedbacks.query.all()
     rates_avg = sum([row.rate for row in rates])/len(rates)
     return rates_avg
+def avg(l):
+    return sum(l)/len(l)
+def get_avg_acc():
+    accuracies = [row.accuracy for row in Guest.query.all()]
+    accuracies = list(filter(lambda x: x != None,accuracies))
+    pcg = avg(accuracies)*100;
+    return pcg
 def create_index_response():
     avg_time = get_avgs()
     asc_by_time = Guest.query.order_by(Guest.game_time).limit(5).all()
+    avg_accies = get_avg_acc()
     all_games = get_games_counts()
     token = generate_token()
     overall_rate = get_overall_rate()
     stars_count = floor(overall_rate)
-    response = make_response(render_template("index.html",top10_players = asc_by_time, easy_avgs=avg_time[0],medium_avgs = avg_time[1],hard_avgs = avg_time[2],all_games=all_games,token=token,overall_rate=overall_rate
-            ,stars_count=stars_count))
+    response = make_response(render_template("index.html",top10_players = asc_by_time,
+     easy_avgs=avg_time[0],
+     medium_avgs = avg_time[1],
+     hard_avgs = avg_time[2],
+     all_games=all_games,
+     token=token,
+     overall_rate=overall_rate,
+     stars_count=stars_count,
+     avg_acc=avg_accies
+    ))
     response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
     response.headers.set('X-Content-Type-Options','nosniff')
     response.headers.set('X-Frame-Options', 'SAMEORIGIN')
@@ -126,19 +143,26 @@ def give_feedback():
         ##get the latest feedback
         latest_date = Feedbacks.query.filter_by(sender_ip=sender_ip).order_by(Feedbacks.id.desc()).limit(1).first()
         delta_time = (current_date-latest_date.last_feedback_date) if latest_date else 0
+        if "," in str(delta_time):
+            delta_time = str(delta_time).split(",")[1]
+        print(delta_time)
         delta_time = datetime.strptime(str(delta_time),"%H:%M:%S.%f") if delta_time != 0 else 0
         if delta_time:
             if delta_time.second < 2:
+                print("[-] Too soon")
                 return "403",403
                 pass
         if not check_token(token):
+            print("[-] Invalid Token")
             return "403",403
         feedback_obj = Feedbacks(rate=rates,name=fname,subject=subject,details=feedback,last_feedback_date=current_date,sender_ip=sender_ip)
         db.session.add(feedback_obj)
         db.session.commit()
         
-        return create_index_response()[0]
-    except:
+        return "200",200
+    except Exception as e:
+        print(e)
+        print("[-] Something went wrong")
         return "403",403
 
 
@@ -148,7 +172,7 @@ def get_leaderboard():
         all_data = Guest.query.filter_by(difficulty=request.args.get("diff")[:-1]).order_by(Guest.game_time).limit(10).all()
         dict_data = {}
         for player in all_data:
-            dict_data[player.guest_id] = player.game_time
+            dict_data[player.guest_id] = str(player.game_time)+"#"+str(player.accuracy)
         return str(dict_data).replace("'",'"')
     pass
 @app.route("/add-winner",methods=["POST"])
@@ -158,11 +182,12 @@ def addWinner():
         token = request.form["token"]
         
         if not check_token(token):
-            
             return "403",403
         guest_id,game_time,diff = request.form["guest_id"],request.form["time"],request.form["diff"]
         ip_addr = request.remote_addr
-        winner_guest = Guest(guest_id=guest_id,game_time=game_time,ip_address=ip_addr,difficulty=diff)
+        accuracy = request.form["accuracy"]
+        print(accuracy)
+        winner_guest = Guest(guest_id=guest_id,game_time=game_time,ip_address=ip_addr,difficulty=diff,accuracy=accuracy)
         all_players = Guest.query.all()
         for player in all_players:
             if player.guest_id == guest_id and player.difficulty == diff:
@@ -195,6 +220,7 @@ def getMaze():
 def index():
     ##calculate avg time
     response = create_index_response()
+
     token = response[1]
     #add user
     add_active_user(token,request.remote_addr)

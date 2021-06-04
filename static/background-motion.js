@@ -200,7 +200,7 @@ function draw(){
     background(26, 40, 59)
     g2.stroke(255)
     noFill()
-    g2.background(0, 49, 71)
+    g2.background(26, 40, 59)
     g2.blendMode(REMOVE)
 
     image(line_graph,0,0)
