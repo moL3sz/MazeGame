@@ -166,6 +166,10 @@ var f1 = false;
 var line_graph;
 function draw(){
 
+}
+/*
+function draw(){
+
     if(!cells){
         return
     }
@@ -234,4 +238,4 @@ function draw(){
 
 
 
-}
+}*/

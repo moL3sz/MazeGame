@@ -1,0 +1,100 @@
+<html>
+    <head>
+        <meta charset="utf-8" lang="hu"/>
+        <link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/default.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js"></script>
+        <style>
+            *{
+
+                font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            }
+            .title-header{
+                color: white;
+                text-align: center;
+            }
+            .title-header > h1{
+                font-size: 4rem;
+            }
+            body{
+                background-color: #27507d;
+            }
+
+            .sql_area{
+                text-align: center;
+            }
+            textarea{
+                width: 40%;
+                height: 15rem;
+                font-size: large;
+                padding: 5px;
+            }
+
+            .run{
+                cursor: pointer;  border-radius: 5px; margin: auto;  margin-top: 20px; display: flex; justify-content: center; align-items: center;  width: 100px; padding: 20px; text-align: center; background-color: yellowgreen;
+            }
+            .run:active{
+                background-color: white;
+            }
+            .op-container{
+                color: white;
+                margin: auto;
+                width: 60%;
+            }
+            .output{
+                margin: auto;
+                margin-top: 40px;
+                width: 100%;
+                min-height: 200px;
+                height: fit-content;
+                
+                background-color: rgba(51, 28, 166,0.4)
+            }
+            table{
+                margin: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="title-header">
+            
+            <h1>Database viewer</h1>
+        
+        </div>
+        <div class="sql_area">
+            <textarea placeholder="SQL code goes here" id="sql_code"></textarea>
+
+
+        </div>
+
+        <div class="run">
+            Run command
+        </div>
+
+        <div class="op-container">
+                            <h3>
+            Output
+        </h3>
+            <div class="output">
+                
+            </div>
+        </div>
+
+    </body>
+    <script>
+        $(".run").click(function(){
+            var ta = document.getElementById("sql_code")
+            sql_command_code = ta.value;
+
+            var post_data = {
+                "SQL_COMMAND":sql_command_code
+            }
+            var res = $.post("/send_sql_command",post_data)
+            res.done(function(data){
+                $(".output").html(data.toString())
+            });
+
+        })
+    </script>
+</html>

@@ -88,13 +88,12 @@ var g1;
 var rad;
 var colors = {"up":"bottom","down":"top","left":"right","right":"left"}
 var arrow_codes = {"up":UP_ARROW,"down":DOWN_ARROW,"right":RIGHT_ARROW,"left":LEFT_ARROW}
-
 var wrong = 0, right = 0;
 function drawGradient(x, y,g,r_) {
     let radius = r_;
-    g.strokeWeight(1)
+    g.strokeWeight(17)
     g.noFill()
-    for (let r = radius; r > 0; r--) {
+    for (let r = radius; r > 0; r-=15) {
       g.stroke(r,r,r,map(r,0,r_,20,0)**2);
         g.ellipse(x, y, r);
       
@@ -140,6 +139,7 @@ var nextCcell;
 var avoid_dir;
 var bg_img;
 var c;
+var map_gr;
 function draw(){
     if(arr){
         if(!f){
@@ -149,6 +149,7 @@ function draw(){
             rad = 100
             if(!ff){
                 c = createCanvas(w*lw+10, h*lw+10)
+                map_gr = createGraphics(w*lw+10, h*lw+10)
                 player = new Player(lw/2,lw/2,lw)
                 g1 = createGraphics(w*lw+10, h*lw+10)
                 c.parent("game-screen")
@@ -156,7 +157,33 @@ function draw(){
                 bg_img = loadImage("static/canvas_bg_1.png")
                 var canvas = document.getElementById('defaultCanvas0');
                 ctx = canvas.getContext('2d');
-                ctx.shadowBlur = 2;
+                map_gr.strokeWeight(4)
+                map_gr.stroke(3, 236, 252) 
+                for(var y = 0; y < h; y++){
+                    for(var x = 0; x < w; x++){
+                        let ws= arr["cells"][y][x]
+                        for(var k = 0; k < ws.length; k++){
+                            if(ws[k] == false){
+                                
+                                switch(k){
+                                    case 0:
+                                        map_gr.line(lw*x, lw*y, lw*x+lw, lw*y)
+                                        break;
+                                    case 1:
+                                        map_gr.line(lw*x+lw, lw*y, lw*x+lw, lw*y+lw)
+                                        break;
+                                    case 2:
+                                        map_gr.line(lw*x, lw*y+lw, lw*x+lw, lw*y+lw)
+                                        break;
+                                    case 3:
+                                        map_gr.line(lw*x, lw*y, lw*x, lw*y+lw)
+                                        break;
+                                }
+                            }
+
+                        }
+                    }
+                 }
             }
             
 
@@ -174,28 +201,28 @@ function draw(){
                             switch(k){
                                 case 0:
                                     var p = []
-                                    for(var l = 0; l <= lw; l+=Math.floor(lw/40)){
+                                    for(var l = 0; l <= lw; l+=Math.floor(lw/10)){
                                         p.push(createVector(cx+l, cy))
                                     }
                                     cell_points[k] = p
                                     break;
                                 case 1:
                                     var p = []
-                                    for(var l = 0; l <= lw; l+=Math.floor(lw/40)){
+                                    for(var l = 0; l <= lw; l+=Math.floor(lw/10)){
                                         p.push(createVector(cx+lw, cy+l))
                                     }
                                     cell_points[k] = p
                                     break;
                                 case 2:
                                     var p = []
-                                    for(var l = 0; l <= lw; l+=Math.floor(lw/40)){
+                                    for(var l = 0; l <= lw; l+=Math.floor(lw/10)){
                                         p.push(createVector(cx+l, cy+lw))
                                     }
                                     cell_points[k] = p
                                     break;
                                 case 3:
                                     var p = []
-                                    for(var l = 0; l <= lw; l+=Math.floor(lw/40)){
+                                    for(var l = 0; l <= lw; l+=Math.floor(lw/10)){
                                         p.push(createVector(cx, cy+l))
                                     }
                                     cell_points[k] = p
@@ -410,33 +437,8 @@ function draw(){
 
     player.move()
     player.render()
-    strokeWeight(4)
-    stroke(3, 236, 252)
-        for(var y = 0; y < h; y++){
-            for(var x = 0; x < w; x++){
-                let ws= arr["cells"][y][x]
-                for(var k = 0; k < ws.length; k++){
-                    if(ws[k] == false){
-                        
-                        switch(k){
-                            case 0:
-                                line(lw*x, lw*y, lw*x+lw, lw*y)
-                                break;
-                            case 1:
-                                line(lw*x+lw, lw*y, lw*x+lw, lw*y+lw)
-                                break;
-                            case 2:
-                                line(lw*x, lw*y+lw, lw*x+lw, lw*y+lw)
-                                break;
-                            case 3:
-                                line(lw*x, lw*y, lw*x, lw*y+lw)
-                                break;
-                        }
-                    }
-
-                }
-            }
-    }
+    image(map_gr,0,0)
+        
     noFill()
     strokeWeight(3)
     stroke(0,255,0)

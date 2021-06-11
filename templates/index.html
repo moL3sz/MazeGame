@@ -6,9 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="icon" 
+      type="image/png" 
+      href="{{url_for('static',filename='logo.png')}}">
     <style>
         .rate_container .fa{
-            font-size: 30px;
+            font-size: 30px;    
         }
         .diff_selection div{
             flex: 1;
@@ -42,7 +46,6 @@
             background-color: rgb(84,196,170);
             color: white;
             width: 500px;
-            height: 180px;
             margin: auto;
             font-weight: 600px;
             display: flex;
@@ -51,6 +54,7 @@
             margin-bottom: 100px;
             border-radius: 2px;
             box-shadow: 0px 0px 10px #40f8a3;
+            padding: 25px;
         }
         .gratulation_container h1{
             font-size: 40px;
@@ -66,8 +70,7 @@
         }
         body{
             background-image: url("{{ url_for('static', filename='background_low_poly.png') }}");
-            background-size:cover;
-            background-position: center;
+            background-size: contain;
             padding: 0;
             width: 100%;
             height: 100%;
@@ -96,14 +99,14 @@
         }
         .header div{
             text-shadow: 0px 0px 20px black;
-            flex: 2;
+            flex: 3;
             text-align: center;
         }
         .header div p{
             margin-top: 30px;
         }
         .header .logo{
-            flex: 4;
+            flex: 6;
             text-align: left;
             margin-left: 30px;
         }
@@ -127,7 +130,7 @@
             margin: auto;
             display: flex;
             flex-direction: row;
-            width: 50%;
+            width: 70%;
         }
         .content div{
             flex: 1;
@@ -139,7 +142,7 @@
         }
         .lets-play{
             width: 22em;
-            background-color: rgb(126, 197, 20);
+            background-color: rgb(27, 134, 17);
             height: 7.8em;
             position: relative;
             z-index: 20;
@@ -152,8 +155,7 @@
             box-shadow: 0px 0px 20px #068d4f;
         }
         .lets-play #play_button{
-            background-color: rgb(126, 197, 20);
-            text-shadow: 0px 0px 30px black;
+            background-color: rgb(27, 134, 17);
             user-select: none;
             color: white;
             padding-top: 35px;
@@ -167,6 +169,7 @@
         }
         .difficulties{
             position: relative;
+            margin-left: 0.5px;
             margin-top: -30px;
             height: 3em;
             width:  22em;
@@ -174,7 +177,6 @@
             cursor: auto;
             display: flex;
             flex-direction: row;
-            font-family: 'Courier New';
             z-index: 1;
             top: -80px;
         }
@@ -311,6 +313,9 @@
                 border-style: none;
                 border-radius: 30px;
             }
+            #gname_class:active{
+                border:none;
+            }
             .statistics{
                 color:whitesmoke;
                 width: 100%;
@@ -358,7 +363,7 @@
     
     
     </script>
-    <script async src="https://cdn.jsdelivr.net/npm/p5@1.3.1/lib/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.3.1/lib/p5.js"></script>
     <script> 
 
         function add_to(w,r){
@@ -379,7 +384,8 @@
                 $(".timer").hide()
                 $(".game_pad").hide()
                 $(".current_time").html($(".timer").html()+"s")
-
+                acc = (r/(w+r)*100).toString().slice(0,5);
+                $(".current_accuracy").html(acc+"%");
          
 
             })
@@ -388,23 +394,22 @@
         }
         var zoom = 1
         function set_zoom(){
-            console.log("ASD")
             if(window.innerWidth < 1400){
                 zoom = 0.7
             }
             else{
-                zoom = 1  
+                zoom = 0.95
             }
             $("html").css("zoom",zoom)
         }
         set_zoom()
         addEventListener("resize",set_zoom)
     </script>
-   <script async src="{{ url_for('static', filename='background-motion.js') }}">
+    <script src="{{ url_for('static', filename='background-motion.js') }}">    
        
    </script>
 
-    <title>AngryMaze</title>
+    <title>MultiT Maze</title>
 </head>
 <body>
     <div class="header">
@@ -462,12 +467,18 @@
             <div class="current_time" style="font-size: 22px;">
                 
             </div>
-            <div class="play_again" style="width: 35%; background-color: coral; border-radius: 20px; margin: auto; font-size: 25px; cursor: pointer;">
+            <div>
+                <p style="font-size: 25px; margin-top: 0; margin-bottom: 0;" ">Your accuracy: </p>
+            </div>
+            <div class="current_accuracy" style="font-size: 22px;">
+
+            </div>
+            <div class="play_again" style="padding: 8px; margin-top: 12px; width: 35%; background-color: coral; border-radius: 0.8rem; margin: auto; font-size: 25px; cursor: pointer;">
                 Play again!
             </div>
         </div>
     </div>
-    <div id="background_motion">
+    <div id="background_motion" style="height: 40rem;">
         <div class="lets-play">
             <p id="play_button">
                 Let's Play
@@ -718,7 +729,7 @@
                     var ts = "0"
                     
                     var time = parseInt(jsoned[key].split("#")[0])
-                    var acc = Math.round(parseFloat(jsoned[key].split("#")[1])*100,10)
+                    var acc = (parseFloat(jsoned[key].split("#")[1])*100).toString().slice(0,5);
                     if (Math.floor(time/6000) > 9){
                         mm = Math.floor(time/6000).toString()
                     }
@@ -808,7 +819,7 @@
         })
         $(".support").click(function(){
             $("html,body").stop().animate(
-                {scrollTop: 1920*zoom,},300
+                {scrollTop: 1880*zoom,},300
             )
 
         })
@@ -869,6 +880,8 @@
         $(".difficulties div").click(function(){
             selected_diff = $(this).attr("class")
             var c = maze_post_data[$(this).attr("class")]
+            var token = $(".send_feedback").attr("data-f")
+            c["token"] = token;
             var r = $.get("/maze-data",c)
 
             //check if its xss reflective
@@ -899,7 +912,17 @@
     }
     }, false);
 
+    
+
     </script>
 
 </body> 
+
+
+<script>
+   addEventListener("load",function(){
+    $(".p5Canvas").remove()
+
+   })
+</script>
 </html>

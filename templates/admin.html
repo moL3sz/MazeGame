@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Admin Page</title>
+    </head>
+    <style>
+        .content{
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            
+        }
+        body{
+            background-color: steelblue;
+        }
+        .login-container{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+            margin: auto;
+            margin-top: 10%;
+            width: fit-content;
+            border-radius: 10px;
+            padding: 50px;
+            padding-left: 100px;
+            padding-right: 100px;
+            background-color: darkblue;
+            color: white;
+        }
+        .labels{
+            display: flex;
+            flex-direction: column;
+            text-align: center  ;
+        }
+        .lables div{
+            width: max-content;
+
+        }
+        .input{
+            width: 100px;
+        }
+        .button{
+            width: 100px;
+            height: 40px;
+            background-color: darkgreen;
+            text-align: center;
+            margin: auto;
+            margin-top: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: wheat;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            font-size: large;
+        }
+        .button:active{
+            background-color: greenyellow;
+        }
+        table{
+            margin: auto;
+        }
+    </style>
+    <body>
+        <div class="content">
+            <div class="login-container">
+                <div class="labels">
+                    <form action="/admin_login" method="POST">
+                        <h1 style="margin-top: 0px; margin-bottom: 10px;">Login</h1>
+                        <hr width="80%">
+                        <div class="username_row">
+                            <span>Username: 
+                            </span>
+                            <input type="text" name="username" id="username_input">
+                        </div>
+                        <div class="password_row">
+                            <span style="padding-right: 4.5px;">Password: 
+                            </span>
+                            <input type="password" name="password" id="password_input">
+                        </div>
+                        <div class="button_row">
+                            <input type="submit" value="Login" name="submit_login" class="button"/>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
