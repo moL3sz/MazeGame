@@ -241,7 +241,7 @@ def admin_login_page():
 @app.route("/admin_login",methods=["POST"])
 def admin_login_check():
     admin_user = "admin"
-    admin_pwd = "hellthebaitgetcaught"
+    admin_pwd = "admin"
 
     try:
         username = request.form["username"]
